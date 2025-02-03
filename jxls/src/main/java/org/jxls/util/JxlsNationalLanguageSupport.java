@@ -47,7 +47,7 @@ public abstract class JxlsNationalLanguageSupport {
     private String end = "}";
     private String defaultValueDelimiter = "=";
     private Pattern pattern;
-    
+
     /**
      * @param in XLSX input stream
      * @return new temp file. Caller must delete it.
@@ -63,13 +63,13 @@ public abstract class JxlsNationalLanguageSupport {
     }
 
     /**
-     * @param in XLSX input stream that contain R{key} elements
+     * @param in  XLSX input stream that contain R{key} elements
      * @param out XLSX output stream for writing the result that contains translated R{key} elements
-     * @throws IOException -
-     * @throws TransformerConfigurationException -
-     * @throws ParserConfigurationException -
-     * @throws SAXException -
-     * @throws TransformerException -
+     * @throws IOException                          -
+     * @throws TransformerConfigurationException    -
+     * @throws ParserConfigurationException         -
+     * @throws SAXException                         -
+     * @throws TransformerException                 -
      * @throws TransformerFactoryConfigurationError -
      */
     public void process(InputStream in, OutputStream out) throws IOException, TransformerConfigurationException, ParserConfigurationException, SAXException, TransformerException, TransformerFactoryConfigurationError {
@@ -81,7 +81,7 @@ public abstract class JxlsNationalLanguageSupport {
             }
         }
     }
-    
+
     protected void init() {
         if (pattern == null) {
             pattern = Pattern.compile(Pattern.quote(start) + "(.*?)" + Pattern.quote(end));
@@ -116,19 +116,20 @@ public abstract class JxlsNationalLanguageSupport {
             public int read() throws IOException {
                 return in.read();
             }
-            
+
             @Override
             public void close() throws IOException { // Do not close after reading a single Zip file entry.
             }
         };
     }
-    
+
     private void processElement(Element root) {
         // Attributes
         NamedNodeMap attributes = root.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node item = attributes.item(i);
-            if (item instanceof Attr attr) {
+            if (item instanceof Attr) {
+                Attr attr = (Attr) item;
                 String val = attr.getValue();
                 String newValue = translateAll(val);
                 if (!val.equals(newValue)) {
@@ -141,13 +142,15 @@ public abstract class JxlsNationalLanguageSupport {
         NodeList children = root.getChildNodes();
         for (int i = 0; i < children.getLength(); i++) {
             Node item = children.item(i);
-            if (item instanceof Text text) {
+            if (item instanceof Text) {
+                Text text = (Text) item;
                 String val = text.getTextContent();
                 String newValue = translateAll(val);
                 if (!val.equals(newValue)) {
                     item.setTextContent(newValue);
                 }
-            } else if (item instanceof Element elem) {
+            } else if (item instanceof Element) {
+                Element elem = (Element) item;
                 processElement(elem); // recursive
             }
         }
@@ -178,7 +181,7 @@ public abstract class JxlsNationalLanguageSupport {
         Iterator<String> iter = sheetNames.iterator();
         while (iter.hasNext()) {
             String oldName = iter.next();
-            
+
             String newName = translateAll(oldName);
             if (!newName.equals(oldName)) {
                 iter.remove();
@@ -186,7 +189,7 @@ public abstract class JxlsNationalLanguageSupport {
             }
         }
     }
-    
+
     protected void transfer(InputStream in, OutputStream out) throws IOException {
         byte[] buf = new byte[8192];
         int len;
@@ -194,7 +197,7 @@ public abstract class JxlsNationalLanguageSupport {
             out.write(buf, 0, len);
         }
     }
-    
+
     public String getStart() {
         return start;
     }

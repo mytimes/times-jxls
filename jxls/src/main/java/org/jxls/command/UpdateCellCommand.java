@@ -16,26 +16,26 @@ public class UpdateCellCommand extends AbstractCommand {
     private String updater;
     private CellDataUpdater cellDataUpdater;
 
-	@Override
-	public String getName() {
-		return COMMAND_NAME;
-	}
+    @Override
+    public String getName() {
+        return COMMAND_NAME;
+    }
 
-	public String getUpdater() {
-		return updater;
-	}
+    public String getUpdater() {
+        return updater;
+    }
 
-	public void setUpdater(String updater) {
-		this.updater = updater;
-	}
+    public void setUpdater(String updater) {
+        this.updater = updater;
+    }
 
-	public CellDataUpdater getCellDataUpdater() {
-		return cellDataUpdater;
-	}
+    public CellDataUpdater getCellDataUpdater() {
+        return cellDataUpdater;
+    }
 
-	public void setCellDataUpdater(CellDataUpdater cellDataUpdater) {
-		this.cellDataUpdater = cellDataUpdater;
-	}
+    public void setCellDataUpdater(CellDataUpdater cellDataUpdater) {
+        this.cellDataUpdater = cellDataUpdater;
+    }
 
     @Override
     public Command addArea(Area area) {
@@ -63,13 +63,14 @@ public class UpdateCellCommand extends AbstractCommand {
 
     private CellDataUpdater createCellDataUpdater(Context context) {
         if (updater == null) {
-        	throw new JxlsException("updater must not be null");
+            throw new JxlsException("updater must not be null");
         }
         Object updaterInstance = context.getVar(updater);
-        if (updaterInstance instanceof CellDataUpdater u) {
+        if (updaterInstance instanceof CellDataUpdater) {
+            CellDataUpdater u = (CellDataUpdater) updaterInstance;
             return u;
         } else {
-        	throw new JxlsException("Value of var '" + updater + "' must implement CellDataUpdater!");
+            throw new JxlsException("Value of var '" + updater + "' must implement CellDataUpdater!");
         }
     }
 }

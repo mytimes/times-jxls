@@ -24,7 +24,7 @@ public class JxlsTemplateFiller {
     protected Transformer transformer;
     protected List<Area> areas;
     private Context context;
-	
+
     protected JxlsTemplateFiller(JxlsOptions options, InputStream template) {
         this.options = options;
         this.template = template;
@@ -32,7 +32,8 @@ public class JxlsTemplateFiller {
 
     /**
      * Creates Excel report using the given data map and writes it to the given output.
-     * @param data not null
+     *
+     * @param data   not null
      * @param output not null
      */
     public void fill(Map<String, Object> data, JxlsOutput output) {
@@ -55,35 +56,36 @@ public class JxlsTemplateFiller {
         }
     }
 
+    private void installCommands() {
+        if (options.getAreaBuilder() instanceof CommandMappings) {
+            CommandMappings cm = (CommandMappings) options.getAreaBuilder();
+            options.getCommands().forEach((k, v) -> cm.addCommandMapping(k, v));
+        }
+    }
+
     protected void createTransformer(OutputStream outputStream) {
         transformer = options.getTransformerFactory().create(template, outputStream, options.getStreaming(), options.getLogger());
     }
 
     protected void configureTransformer() {
-    	transformer.setIgnoreColumnProps(options.isIgnoreColumnProps());
-    	transformer.setIgnoreRowProps(options.isIgnoreRowProps());
-    	transformer.setSheetCreator(options.getSheetCreator());
-    }
-
-    private void installCommands() {
-        if (options.getAreaBuilder() instanceof CommandMappings cm) {
-            options.getCommands().forEach((k, v) -> cm.addCommandMapping(k, v));
-        }
+        transformer.setIgnoreColumnProps(options.isIgnoreColumnProps());
+        transformer.setIgnoreRowProps(options.isIgnoreRowProps());
     }
 
     /**
      * Implementation must set areas variable.
+     *
      * @param data -
      */
     protected void processAreas(Map<String, Object> data) {
         areas = options.getAreaBuilder().build(transformer, options.isClearTemplateCells());
-        
+
         context = createContext(createExpressionEvaluatorContext(), data, options.getRunVarAccess());
         context.setUpdateCellDataArea(options.isUpdateCellDataArea());
         options.getNeedsPublicContextList().forEach(ee -> ee.setPublicContext(context));
-        
+
         areas.forEach(area -> area.applyAt(new CellRef(area.getStartCellRef().getCellName()), context));
-        
+
         if (options.getFormulaProcessor() != null) {
             areas.forEach(area -> area.processFormulas(options.getFormulaProcessor()));
         }
@@ -103,19 +105,19 @@ public class JxlsTemplateFiller {
     protected void preWrite() {
         transformer.setEvaluateFormulas(options.isRecalculateFormulasBeforeSaving());
         transformer.setFullFormulaRecalculationOnOpening(options.isRecalculateFormulasOnOpening());
-		Consumer<String> action;
-		switch (options.getKeepTemplateSheet()) {
-		case DELETE:
-			action = sheetName -> transformer.deleteSheet(sheetName);
-			break;
-		case HIDE:
-			action = sheetName -> transformer.setHidden(sheetName, true);
-			break;
-		default:
-			return;
-		}
-		getSheetsNameOfMultiSheetTemplate(areas).stream().forEach(action);
-		options.getPreWriteActions().forEach(preWriteAction -> preWriteAction.preWrite(transformer, context));
+        Consumer<String> action;
+        switch (options.getKeepTemplateSheet()) {
+            case DELETE:
+                action = sheetName -> transformer.deleteSheet(sheetName);
+                break;
+            case HIDE:
+                action = sheetName -> transformer.setHidden(sheetName, true);
+                break;
+            default:
+                return;
+        }
+        getSheetsNameOfMultiSheetTemplate(areas).stream().forEach(action);
+        options.getPreWriteActions().forEach(preWriteAction -> preWriteAction.preWrite(transformer, context));
     }
 
     /**

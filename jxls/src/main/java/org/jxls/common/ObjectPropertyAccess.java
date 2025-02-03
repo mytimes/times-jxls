@@ -67,7 +67,8 @@ public class ObjectPropertyAccess {
      * @throws IllegalAccessException -
      */
     public static Object getObjectProperty(Object obj, String propertyName) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        if (obj instanceof Map<?,?> map) { // Map access
+        if (obj instanceof Map<?,?>) { // Map access
+            Map<?,?> map = (Map<?,?>)obj;
             return map.get(propertyName);
         } else { // DynaBean or Java bean access
             return PropertyUtils.getProperty(obj, propertyName);

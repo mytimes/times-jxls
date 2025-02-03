@@ -22,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.jxls.builder.SheetCreator;
 import org.jxls.common.AreaRef;
 import org.jxls.common.CellData;
 import org.jxls.common.CellRef;
@@ -47,8 +46,7 @@ public class PoiTransformer extends AbstractTransformer {
     private InputStream inputStream;
     private final boolean isSXSSF;
     private JxlsLogger logger = new PoiExceptionLogger();
-    private SheetCreator sheetCreator;
-
+    
     /**
      * @param workbook source workbook to transform
      * @param streaming false: without streaming, true: with streaming (with default parameter values)
@@ -69,7 +67,8 @@ public class PoiTransformer extends AbstractTransformer {
         isSXSSF = streaming;
         readCellData();
         if (isSXSSF) {
-            if (this.workbook instanceof XSSFWorkbook xwb) {
+            if (this.workbook instanceof XSSFWorkbook) {
+                XSSFWorkbook xwb  = (XSSFWorkbook)this.workbook;
                 this.workbook = new SXSSFWorkbook(xwb, rowAccessWindowSize, compressTmpFiles, useSharedStringsTable);
             } else {
                 throw new IllegalArgumentException("Failed to create POI Transformer using SXSSF API as the input workbook is not XSSFWorkbook");
@@ -109,8 +108,15 @@ public class PoiTransformer extends AbstractTransformer {
         if (cellData == null) {
             return;
         }
-        Sheet destSheet = getSheet(srcCellRef, targetCellRef);
-        Row destRow = getRow(srcCellRef, targetCellRef, destSheet);
+        Sheet destSheet = workbook.getSheet(targetCellRef.getSheetName());
+        if (destSheet == null) {
+            destSheet = workbook.createSheet(targetCellRef.getSheetName());
+            PoiUtil.copySheetProperties(workbook.getSheet(srcCellRef.getSheetName()), destSheet);
+        }
+        Row destRow = destSheet.getRow(targetCellRef.getRow());
+        if (destRow == null) {
+            destRow = destSheet.createRow(targetCellRef.getRow());
+        }
         transformCell(srcCellRef, targetCellRef, context, updateRowHeightFlag, cellData, destSheet, destRow);
     }
     
@@ -123,26 +129,6 @@ public class PoiTransformer extends AbstractTransformer {
             }
         }
         return cellData;
-    }
-    
-    protected Sheet getSheet(CellRef srcCellRef, CellRef targetCellRef) {
-        String targetSheetName = targetCellRef.getSheetName();
-        Sheet sheet = workbook.getSheet(targetSheetName);
-        if (sheet == null) {
-            if (sheetCreator == null) {
-                throw new JxlsException("Can not create sheet!");
-            }
-            sheet = (Sheet) sheetCreator.createSheet(workbook, srcCellRef.getSheetName(), targetSheetName);
-        }
-        return sheet;
-    }
-    
-    protected Row getRow(CellRef srcCellRef, CellRef targetCellRef, Sheet sheet) {
-        Row row = sheet.getRow(targetCellRef.getRow());
-        if (row == null) {
-            row = sheet.createRow(targetCellRef.getRow());
-        }
-        return row;
     }
 
     protected void transformCell(CellRef srcCellRef, CellRef targetCellRef, Context context,
@@ -478,10 +464,5 @@ public class PoiTransformer extends AbstractTransformer {
                 }
             }
         }
-    }
-
-    @Override
-    public void setSheetCreator(SheetCreator sheetCreator) {
-        this.sheetCreator = sheetCreator;
     }
 }

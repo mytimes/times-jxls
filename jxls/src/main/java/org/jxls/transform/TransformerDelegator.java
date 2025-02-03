@@ -5,7 +5,6 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Set;
 
-import org.jxls.builder.SheetCreator;
 import org.jxls.common.AreaRef;
 import org.jxls.common.CellData;
 import org.jxls.common.CellRef;
@@ -159,9 +158,4 @@ public class TransformerDelegator implements Transformer {
 	public void setIgnoreRowProps(boolean ignoreRowProps) {
 		transformer.setIgnoreRowProps(ignoreRowProps);
 	}
-
-    @Override
-    public void setSheetCreator(SheetCreator sheetCreator) {
-        transformer.setSheetCreator(sheetCreator);
-    }
 }

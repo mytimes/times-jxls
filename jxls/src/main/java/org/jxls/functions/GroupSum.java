@@ -87,7 +87,8 @@ public class GroupSum<T> implements NeedsPublicContext {
     }
 
     private Object getValue(Object i, String fieldName) {
-        if (i instanceof Map<?,?> map) {
+        if (i instanceof Map<?,?> ) {
+            Map<?,?> map =  (Map<?,?>)i;
             if (!map.containsKey(fieldName)) {
                 throw new JxlsException("Attribute " + fieldName + " does not exist in collection element!");
             }

@@ -6,7 +6,7 @@ public class BigDecimalSummarizerBuilder implements SummarizerBuilder<BigDecimal
 
     @Override
     public Summarizer<BigDecimal> build() {
-        return new Summarizer<>() {
+        return new Summarizer<BigDecimal>() {
             private BigDecimal sum = BigDecimal.ZERO;
 
             @Override

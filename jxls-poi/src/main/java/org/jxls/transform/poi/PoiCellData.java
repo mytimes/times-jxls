@@ -26,7 +26,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 /**
  * Cell data wrapper for POI cell
- * 
+ *
  * @author Leonid Vysochyn
  */
 public class PoiCellData extends org.jxls.common.CellData {
@@ -141,7 +141,8 @@ public class PoiCellData extends org.jxls.common.CellData {
 
     public void writeToCell(Cell cell, Context context, PoiTransformer transformer) {
         evaluate(context);
-        if (evaluationResult instanceof WritableCellValue e) {
+        if (evaluationResult instanceof WritableCellValue) {
+            WritableCellValue e = (WritableCellValue) evaluationResult;
             cell.setCellStyle(cellStyle);
             e.writeToCell(cell, context);
         } else {
@@ -262,7 +263,8 @@ public class PoiCellData extends org.jxls.common.CellData {
 
     // protected so any user can change this piece of code
     protected void clearCellValue(org.apache.poi.ss.usermodel.Cell poiCell) {
-        if (poiCell instanceof XSSFCell xcell) {
+        if (poiCell instanceof XSSFCell ) {
+            XSSFCell xcell   = (XSSFCell)poiCell;
             CTCell cell = xcell.getCTCell(); // POI internal access, but there's no other way
             // Now do the XSSFCell.setFormula code that was done before POI commit https://github.com/apache/poi/commit/1253a29
             // After setting the formula in attribute f we clear the value attribute v if set. This causes a recalculation

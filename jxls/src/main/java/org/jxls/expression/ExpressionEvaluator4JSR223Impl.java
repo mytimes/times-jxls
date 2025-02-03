@@ -24,7 +24,7 @@ public class ExpressionEvaluator4JSR223Impl implements ExpressionEvaluator {
         Map<String, Object> context;
     }
 
-    private static final ThreadLocal<BindingCacheHolder> threadLocalCache = new ThreadLocal<>() {
+    private static final ThreadLocal<BindingCacheHolder> threadLocalCache = new ThreadLocal<BindingCacheHolder>() {
         
         @Override
         protected BindingCacheHolder initialValue() {

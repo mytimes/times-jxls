@@ -52,7 +52,8 @@ public class ExpressionEvaluatorContext {
      * @return EvaluationResult
      */
     public EvaluationResult evaluateRawExpression(String rawExpression, Map<String, Object> data) {
-        StringBuilder sb = new StringBuilder();
+        //TODO
+        StringBuffer sb = new StringBuffer();
         int beginExpressionLength = expressionNotationBegin.length();
         int endExpressionLength = expressionNotationEnd.length();
         Matcher exprMatcher = expressionNotationPattern.matcher(rawExpression);

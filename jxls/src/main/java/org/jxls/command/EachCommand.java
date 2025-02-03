@@ -31,12 +31,12 @@ import org.jxls.util.OrderByComparator;
  * <li>'select' holds an expression for filtering collection.</li>
  * <li>'groupBy' is the name for grouping (prepend var+".").</li>
  * <li>'groupOrder' defines the grouping order. Case does not matter.
- *     "ASC" for ascending, "DESC" for descending sort order. Other values or null: no sorting.</li>
+ * "ASC" for ascending, "DESC" for descending sort order. Other values or null: no sorting.</li>
  * <li>'orderBy' contains the names separated with comma and each with an optional postfix " ASC" (default) or " DESC" for the sort order. Prepend var+'.' before each name.</li>
  * <li>'multisheet' is the name of the sheet names container.</li>
  * <li>'cellRefGenerator' defines custom strategy for target cell references.</li>
  * </ul>
- * 
+ *
  * <p>The variables defined in 'var' and 'varIndex' will be saved using the special method Context.getRunVar()</p>
  *
  * @author Leonid Vysochyn
@@ -48,7 +48,9 @@ public class EachCommand extends AbstractCommand {
     private String items;
     private String var;
     private String varIndex;
+
     public enum Direction {RIGHT, DOWN}
+
     private Direction direction = Direction.DOWN;
     private String select;
     private String groupBy;
@@ -57,7 +59,9 @@ public class EachCommand extends AbstractCommand {
     private String multisheet;
     private CellRefGenerator cellRefGenerator;
     private Area area;
-    /** Old behavior will be removed in a future release. */
+    /**
+     * Old behavior will be removed in a future release.
+     */
     private boolean oldSelectBehavior = false;
 
     public EachCommand() {
@@ -205,7 +209,7 @@ public class EachCommand extends AbstractCommand {
 
     /**
      * @param groupBy property name for grouping the collection.
-     * You should write the run var name + "." before the property name.
+     *                You should write the run var name + "." before the property name.
      */
     public void setGroupBy(String groupBy) {
         this.groupBy = groupBy;
@@ -227,8 +231,8 @@ public class EachCommand extends AbstractCommand {
 
     /**
      * @param orderBy property names for ordering the list.
-     * You should write the run var name + "." before each property name.
-     * You can write " ASC" or " DESC" after each property name for ascending/descending sorting order. ASC is the default.
+     *                You should write the run var name + "." before each property name.
+     *                You can write " ASC" or " DESC" after each property name for ascending/descending sorting order. ASC is the default.
      */
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
@@ -277,7 +281,7 @@ public class EachCommand extends AbstractCommand {
     public void setOldSelectBehavior(boolean oldSelectBehavior) {
         this.oldSelectBehavior = oldSelectBehavior;
     }
-    
+
     public void setOldSelectBehavior(String oldSelectBehavior) {
         this.oldSelectBehavior = "true".equalsIgnoreCase(oldSelectBehavior);
     }
@@ -323,9 +327,10 @@ public class EachCommand extends AbstractCommand {
         }
         return size;
     }
-    
+
     private void orderCollection(Iterable<?> itemsCollection) {
-        if (itemsCollection instanceof List<?> itemsList && orderBy != null && !orderBy.trim().isEmpty()) {
+        if (itemsCollection instanceof List<?> && orderBy != null && !orderBy.trim().isEmpty()) {
+            List<?> itemsList = (List<?>) itemsCollection;
             List<String> orderByProps = Arrays.asList(orderBy.split(","))
                     .stream().map(f -> removeVarPrefix(f, var)).collect(Collectors.toList());
             itemsList.sort(new OrderByComparator<>(orderByProps));
@@ -360,7 +365,7 @@ public class EachCommand extends AbstractCommand {
                     ? new DynamicSheetNameGenerator(multisheet, cellRef)
                     : new SheetNameGenerator(sheetNameList, cellRef);
         }
-        
+
         ExpressionEvaluator selectEvaluator = null;
         if (selectExpression != null) {
             selectEvaluator = context.getExpressionEvaluator(selectExpression);
@@ -403,7 +408,7 @@ public class EachCommand extends AbstractCommand {
         }
         return new Size(newWidth, newHeight);
     }
-    
+
     private List<String> extractSheetNameList(Context context) {
         try {
             Object sheetnames = context.getVar(multisheet);
@@ -417,9 +422,9 @@ public class EachCommand extends AbstractCommand {
         }
         throw new JxlsException("The sheet names var '" + multisheet + "' must be of type List<String>.");
     }
-    
+
     private static String removeVarPrefix(String pVariable, String pVar) {
-    	pVariable = pVariable.trim();
+        pVariable = pVariable.trim();
         int o = pVariable.indexOf(".");
         if (o >= 0) {
             String pre = pVariable.substring(0, o).trim();
@@ -429,12 +434,13 @@ public class EachCommand extends AbstractCommand {
         }
         return pVariable;
     }
-    
+
     /**
      * Groups items from an iterable collection using passed group property and group order
-     * @param iterable iterable object
+     *
+     * @param iterable      iterable object
      * @param groupProperty property to use to group the items
-     * @param groupOrder an order to sort the groups
+     * @param groupOrder    an order to sort the groups
      * @return a collection of group data objects
      */
     static Collection<GroupData> groupIterable(Iterable<?> iterable, String groupProperty, String groupOrder, String var, JxlsLogger logger) {
@@ -455,18 +461,21 @@ public class EachCommand extends AbstractCommand {
         boolean ignoreCase = groupOrder != null && groupOrder.toLowerCase().endsWith("_ignorecase");
         for (Object bean : iterable) {
             Object groupKey = getGroupKey(bean, groupProperty, var, logger);
-            if (ignoreCase && groupKey instanceof String s) {
+            if (ignoreCase && groupKey instanceof String) {
+                String s = (String) groupKey;
                 groupKey = s.toLowerCase();
             }
             groupByValues.add(groupKey);
         }
-        for (Iterator<Object> iterator = groupByValues.iterator(); iterator.hasNext();) {
+        for (Iterator<Object> iterator = groupByValues.iterator(); iterator.hasNext(); ) {
             Object groupValue = iterator.next();
             List<Object> groupItems = new ArrayList<>();
             for (Object bean : iterable) {
                 Object groupKey = getGroupKey(bean, groupProperty, var, logger);
                 boolean eq;
-                if (ignoreCase && groupValue instanceof String a && groupKey instanceof String b) {
+                if (ignoreCase && groupValue instanceof String && groupKey instanceof String) {
+                    String a = (String) groupValue;
+                    String b = (String) groupKey;
                     eq = a.equalsIgnoreCase(b);
                 } else {
                     eq = groupValue.equals(groupKey);

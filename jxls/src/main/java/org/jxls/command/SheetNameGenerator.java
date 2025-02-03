@@ -23,7 +23,8 @@ public class SheetNameGenerator implements CellRefGenerator {
     public CellRef generateCellRef(int index, Context context, JxlsLogger logger) {
         String sheetName = index >= 0 && index < sheetNames.size() ? sheetNames.get(index) : null;
         Object builder = RunVar.getRunVar(SafeSheetNameBuilder.CONTEXT_VAR_NAME, context);
-        if (builder instanceof SafeSheetNameBuilder b) {
+        if (builder instanceof SafeSheetNameBuilder) {
+            SafeSheetNameBuilder b = (SafeSheetNameBuilder) builder;
             sheetName = b.createSafeSheetName(sheetName, index, logger);
         }
         if (sheetName == null) {

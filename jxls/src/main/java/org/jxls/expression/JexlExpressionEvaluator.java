@@ -19,16 +19,16 @@ public class JexlExpressionEvaluator implements ExpressionEvaluator {
     private final JxlsJexlPermissions permissions;
     private JexlExpression jexlExpression;
     private JexlContext jexlContext;
-    private static ThreadLocal<Map<String, JexlEngine>> jexlThreadLocal = new ThreadLocal<>() {
+    private static ThreadLocal<Map<String, JexlEngine>> jexlThreadLocal = new ThreadLocal<Map<String, JexlEngine>>() {
         @Override
         protected Map<String, JexlEngine> initialValue() {
-            return new HashMap<>();
+            return new HashMap<String, JexlEngine>();
         }
     };
-    private static final ThreadLocal<Map<String, JexlExpression>> expressionMapThreadLocal = new ThreadLocal<>() {
+    private static final ThreadLocal<Map<String, JexlExpression>> expressionMapThreadLocal = new ThreadLocal<Map<String, JexlExpression>>() {
         @Override
         protected Map<String, JexlExpression> initialValue() {
-            return new HashMap<>();
+            return new HashMap<String, JexlExpression>();
         }
     };
 

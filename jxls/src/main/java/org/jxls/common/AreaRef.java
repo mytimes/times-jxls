@@ -4,7 +4,7 @@ import org.jxls.util.CellRefUtil;
 
 /**
  * Defines area bounds
- * 
+ *
  * @author Leonid Vysochyn
  */
 public class AreaRef {
@@ -24,7 +24,7 @@ public class AreaRef {
             throw new IllegalArgumentException("Cannot create area from specified cell references " + firstCellRef + ", " + lastCellRef);
         }
     }
-    
+
     public AreaRef(CellRef cellRef, Size size) {
         firstCellRef = cellRef;
         lastCellRef = new CellRef(cellRef.getSheetName(),
@@ -32,7 +32,7 @@ public class AreaRef {
                 cellRef.getCol() + size.getWidth() - 1);
         updateStartEndRowCol();
     }
-    
+
     public AreaRef(String areaRef) {
         String[] parts = CellRefUtil.separateAreaRefs(areaRef);
         String part0 = parts[0];
@@ -55,7 +55,7 @@ public class AreaRef {
         }
         updateStartEndRowCol();
     }
-    
+
     private void updateStartEndRowCol() {
         startRow = firstCellRef.getRow();
         startCol = firstCellRef.getCol();
@@ -81,7 +81,7 @@ public class AreaRef {
         }
         return new Size(endCol - startCol + 1, endRow - startRow + 1);
     }
-    
+
     public boolean contains(CellRef cellRef) {
         int row = cellRef.getRow();
         return row >= startRow && row <= endRow && cellRef.getCol() >= startCol && cellRef.getCol() <= endCol
@@ -93,10 +93,10 @@ public class AreaRef {
     }
 
     public boolean contains(int row, int col) {
-        return     row >= startRow && row <= endRow
+        return row >= startRow && row <= endRow
                 && col >= startCol && col <= endCol;
     }
-    
+
     public boolean contains(AreaRef areaRef) {
         return areaRef == null || contains(areaRef.getFirstCellRef()) && contains(areaRef.getLastCellRef());
     }
@@ -108,7 +108,8 @@ public class AreaRef {
 
     @Override
     public boolean equals(Object o) {
-        if (o instanceof AreaRef areaRef) {
+        if (o instanceof AreaRef) {
+            AreaRef areaRef = (AreaRef) o;
             if (this == o) {
                 return true;
             }

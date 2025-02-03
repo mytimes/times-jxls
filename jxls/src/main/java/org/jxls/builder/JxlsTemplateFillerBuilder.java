@@ -61,7 +61,6 @@ public class JxlsTemplateFillerBuilder<SELF extends JxlsTemplateFillerBuilder<SE
     protected final List<NeedsPublicContext> needsContextList = new ArrayList<>();
     protected final List<PreWriteAction> preWriteActions = new ArrayList<>();
     protected RunVarAccess runVarAccess;
-    private SheetCreator sheetCreator;
 
     /**
      * @return new builder instance
@@ -122,7 +121,7 @@ public class JxlsTemplateFillerBuilder<SELF extends JxlsTemplateFillerBuilder<SE
                 logger, formulaProcessor, updateCellDataArea, ignoreColumnProps, ignoreRowProps,
                 recalculateFormulasBeforeSaving, recalculateFormulasOnOpening, keepTemplateSheet,
                 areaBuilder, commands, clearTemplateCells, transformerFactory, streaming, needsContextList,
-                preWriteActions, runVarAccess, sheetCreator);
+                preWriteActions, runVarAccess);
     }
 
     /**
@@ -363,15 +362,6 @@ public class JxlsTemplateFillerBuilder<SELF extends JxlsTemplateFillerBuilder<SE
         this.runVarAccess = runVarAccess;
         return (SELF) this;
     }
-    
-    public SELF withSheetCreator(SheetCreator sheetCreator) {
-        this.sheetCreator = sheetCreator;
-        return (SELF) this;
-    }
-    
-    public SheetCreator getSheetCreator() {
-        return sheetCreator;
-    }
 
     /**
      * @param templateInputStream Excel template as InputStream
@@ -417,7 +407,7 @@ public class JxlsTemplateFillerBuilder<SELF extends JxlsTemplateFillerBuilder<SE
      * @throws FileNotFoundException
      */
     public SELF withTemplate(String templateFileName) throws FileNotFoundException {
-    	if (templateFileName == null || templateFileName.isBlank()) {
+    	if (templateFileName == null || templateFileName.trim().isEmpty()) {
     		throw new IllegalArgumentException("Please specify templateFileName");
     	}
         return withTemplate(new File(templateFileName));

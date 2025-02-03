@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.jxls.area.Area;
@@ -193,7 +194,7 @@ public class GridCommand extends AbstractCommand {
             } catch (Exception e) {
                 throw new JxlsException("Failed to evaluate property " + prop + " of row object of class " + rowObject.getClass().getName(), e);
             }
-        }).toList();
+        }).collect(Collectors.toList());
     }
 
     private void processCellCollection(Iterable<?> cellCollection, RunVar runVar, final CellRef cellRef, GridCommandContext ctx, Context context) {

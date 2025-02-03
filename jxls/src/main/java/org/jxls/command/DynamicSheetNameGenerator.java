@@ -30,8 +30,9 @@ public class DynamicSheetNameGenerator implements CellRefGenerator {
         String sheetName = (String) r;
         boolean safeName = false;
         Object builder = RunVar.getRunVar(SafeSheetNameBuilder.CONTEXT_VAR_NAME, context);
-        if (builder instanceof SafeSheetNameBuilder sBuilder) {
+        if (builder instanceof SafeSheetNameBuilder) {
             // The SafeSheetNameBuilder builds a valid and unique sheetName. This is the new style.
+            SafeSheetNameBuilder sBuilder = (SafeSheetNameBuilder) builder;
             sheetName = sBuilder.createSafeSheetName(sheetName, index, logger);
             safeName = true;
         }
@@ -41,7 +42,7 @@ public class DynamicSheetNameGenerator implements CellRefGenerator {
         if (!safeName && !usedSheetNames.add(sheetName)) {
             // This is the old-style algorithm for backward compatibility.
             // name already used
-            for (int i = 1;; i++) {
+            for (int i = 1; ; i++) {
                 String newName = sheetName + '(' + i + ')';
                 if (usedSheetNames.add(newName)) {
                     sheetName = newName;

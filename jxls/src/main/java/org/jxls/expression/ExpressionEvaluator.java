@@ -37,8 +37,8 @@ public interface ExpressionEvaluator {
      */
     default boolean isConditionTrue(String condition, Map<String, Object> data) {
         Object conditionResult = evaluate(condition, data);
-        if (conditionResult instanceof Boolean b) {
-            return Boolean.TRUE.equals(b);
+        if (conditionResult instanceof Boolean) {
+            return Boolean.TRUE.equals((Boolean) conditionResult);
         } else if (conditionResult == null) {
             throw new JxlsException("Result of condition \"" + condition + "\" is null");
         }
